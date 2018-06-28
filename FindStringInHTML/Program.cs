@@ -69,7 +69,7 @@ namespace FindStringInHTML
 							{
 								Match match = Regex.Match(line, "<img.+>");
 								lines.Add(match.Value);
-								Match m = Regex.Match(match.Value, "(?<=src=\")\\w+\\W{1}\\.+\"");
+								Match m = Regex.Match(match.Value, "(?<=src=)\".+?\\..+?\\b\"");
 								Console.WriteLine(m.Value);
 								Matches.Add(m.Value);
 							}
