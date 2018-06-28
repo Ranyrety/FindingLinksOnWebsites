@@ -14,20 +14,20 @@ namespace FindStringInHTML
 	{
 		static  void Main(string[] args)
 		{
-			TestClass test = new TestClass("https://www.resetera.com/threads/steamspy-is-now-sharing-specific-numbers-again-experimental.52068/", "^<a.+/>");
+			//TestClass test = new TestClass("https://www.resetera.com/threads/steamspy-is-now-sharing-specific-numbers-again-experimental.52068/", "^<a.+/>");
+			TestClass test = new TestClass("https://twitter.com/DarkCrystal_HQ", " ^<a.+/>");
 
-			//test.WriteToConsole();
-			List<string> mediaList = new List<string>();
+			List <string> mediaList = new List<string>();
 			Task task = Task.Run(() => test.PrintMediaPaths());
 			while(!task.IsCompleted)
 			{
 				Console.WriteLine("waiting data to be processed");
 			}
+
+			Console.WriteLine($"Data processed there was {test.Matches.Count} matches ");
+			Console.WriteLine($"Press any key to quit");
 			
-			//iterate over collection and check if it contains multimedia files links
-			
-			
-			Console.ReadLine();
+			Console.ReadKey();
 			
 		}
 	}
@@ -51,57 +51,54 @@ namespace FindStringInHTML
 			Matches = new List<string>();
 		}
 
-		private async Task WriteToConsole()
+		//prototyp for function that will return list of strings containing specific markup 
+		private async Task FindLinkStrings()
 		{
 			List<string> matches = new List<string>();
-			HttpClient client = new HttpClient();
-			
-			using (var stream = await client.GetStreamAsync(adress))
+
+
+			using (HttpClient client = new HttpClient())
 			{
-				using(var reader = new StreamReader(stream))
+				using (var stream = await client.GetStreamAsync(adress))
 				{
-					while(!reader.EndOfStream)
+					using (var reader = new StreamReader(stream))
 					{
-						string line = await reader.ReadLineAsync();
-						if (regex.IsMatch(line))
+						while (!reader.EndOfStream)
 						{
-							if (Regex.Match(line, "<img.+>").Success)
+							string line = await reader.ReadLineAsync();
+							if (regex.IsMatch(line))
 							{
-								Match match = Regex.Match(line, "<img.+>");
-								lines.Add(match.Value);
-								Match m = Regex.Match(match.Value, "(?<=src=)\".+?\\..+?\\b\"");
-								Console.WriteLine(m.Value);
-								Matches.Add(m.Value);
+								if (Regex.Match(line, "<img.+>").Success)
+								{
+									Match match = Regex.Match(line, "<img.+>");
+									lines.Add(match.Value);
+									Match m = Regex.Match(match.Value, "(?<=src=)\".+?\\..+?\\b\"");
+									Console.WriteLine(m.Value);
+									Matches.Add(m.Value);
+								}
 							}
 						}
 					}
 				}
 			}
-			//foreach(string l in matches)
-			//{
-			//	Console.WriteLine(l);
-			//	Console.WriteLine();
-			//}
-
 		}
 
+		//prototype function for finding if link is to some resources which interest us
 		private async Task GetMediaPath()
 		{
-			//Task task = Task.Run(() => WriteToConsole());
 			
-
 			foreach(var i in Matches)
 			{
-				if(i.Contains(".jpg") | i.Contains(".gif"))
+				if(i.Contains(".jpg") | i.Contains(".gif") | i.Contains(".png"))
 				{
 					MediaPath.Add(i);
 				}
 			}
 		}
-
+		
 		public async Task PrintMediaPaths()
 		{
-			await WriteToConsole();
+			await FindLinkStrings();
 			await GetMediaPath();
 			foreach(var i in MediaPath)
 			{
