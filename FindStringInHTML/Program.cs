@@ -14,8 +14,8 @@ namespace FindStringInHTML
 	{
 		static  void Main(string[] args)
 		{
-			//TestClass test = new TestClass("https://www.resetera.com/threads/steamspy-is-now-sharing-specific-numbers-again-experimental.52068/", "^<a.+/>");
-			TestClass test = new TestClass("https://twitter.com/DarkCrystal_HQ", " ^<a.+/>");
+			TestClass test = new TestClass("https://www.resetera.com/threads/steamspy-is-now-sharing-specific-numbers-again-experimental.52068/", "^<a.+/>");
+			//TestClass test = new TestClass("https://twitter.com/DarkCrystal_HQ", " ^<a.+/>");
 
 			List <string> mediaList = new List<string>();
 			Task task = Task.Run(() => test.PrintMediaPaths());
@@ -89,7 +89,7 @@ namespace FindStringInHTML
 			
 			foreach(var i in Matches)
 			{
-				if(i.Contains(".jpg") | i.Contains(".gif") | i.Contains(".png"))
+				if(i.Contains(".jpg") || i.Contains(".gif") || i.Contains(".png"))
 				{
 					MediaPath.Add(i);
 				}
